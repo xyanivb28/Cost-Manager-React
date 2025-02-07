@@ -5,7 +5,7 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DemoContainer} from '@mui/x-date-pickers/internals/demo/index.js';
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import ReportCard from "./ReportCard.jsx";
-import {db} from "../idb_modules.js";
+import {db} from "../idb.js";
 
 export default function Report() {
   const [loading, setLoading] = useState(true);

@@ -1,7 +1,7 @@
 let idb = {};
 let db = {};
 
-db.addCost = async function (costData) {
+db.addCost = async function(costData) {
   return new Promise((resolve, reject) => {
     const transaction = db.database.transaction('costs', 'readwrite');
     const objectStore = transaction.objectStore('costs');
@@ -20,6 +20,61 @@ db.addCost = async function (costData) {
     };
   });
 };
+
+db.getAllCostItemsByMonthAndYear = async function(month, year) {
+  return new Promise((resolve, reject) => {
+    if (!db.database) {
+      reject('Database not initialized.');
+      return;
+    }
+
+    const transaction = db.database.transaction('costs', 'readonly');
+    const store = transaction.objectStore('costs');
+    const request = store.getAll();
+
+    request.onsuccess = () => {
+      const allItems = request.result;
+
+      // Filter items by month and year
+      const validCostItems = allItems.filter(item => {
+        const itemDate = new Date(item.date);
+        return itemDate.getFullYear() === year && itemDate.getMonth() === month;
+      });
+
+      console.log(validCostItems);
+      resolve(validCostItems);
+    };
+
+    request.onerror = () => {
+      reject('Error retrieving costs.');
+    };
+  });
+};
+
+db.deleteCostItem = async function (costItemId) {
+  return new Promise((resolve, reject) => {
+    if (!db.database) {
+      reject("Database not initialized.");
+      return;
+    }
+
+    const transaction = db.database.transaction("costs", "readwrite");
+    const store = transaction.objectStore("costs");
+
+    const request = store.delete(costItemId);
+
+    request.onsuccess = () => {
+      resolve(true);
+    };
+
+    request.onerror = () => {
+      reject("Error deleting cost item.");
+    };
+  });
+};
+
+
+
 
 // Function to open the IndexedDB database
 idb.openCostsDB = async function (dbName, version) {
@@ -44,8 +99,12 @@ idb.openCostsDB = async function (dbName, version) {
 
       // Create an object store for costs with auto-incrementing keys
       if (!database.objectStoreNames.contains('costs')) {
-        database.createObjectStore('costs', { keyPath: "id", autoIncrement: true });
+        database.createObjectStore('costs', {keyPath: "id", autoIncrement: true});
       }
     };
   });
 };
+
+
+// Export the functions so they can be used in the HTML file
+export {idb, db};

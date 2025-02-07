@@ -10,7 +10,7 @@ import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import {Skeleton} from "@mui/material";
 import {useState} from "react";
-import { db } from '../idb_modules.js';
+import { db } from '../idb.js';
 
 export default function Summary() {
   const [loading, setLoading] = useState(true);
